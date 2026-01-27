@@ -1,0 +1,188 @@
+.table-wrapper{}
+
+.profileAvatar-settings {
+    width: 4rem;
+    height: 4rem;
+}
+
+.nav{
+    flex-wrap:nowrap;
+}
+
+.verify-form .dropzone{
+    min-height: auto;!important;
+}
+
+.verify-form  .dropzone .dz-preview.dz-image-preview {
+    background: transparent!important;
+}
+
+.verify-form  .dropzone .dz-preview:hover .dz-image img {
+    -webkit-filter: blur(2px)!important;
+    filter: blur(2px)!important;
+}
+
+.verify-form  .dropzone .dz-preview .dz-filename{
+    display: none!important;
+}
+
+.verify-form  .dropzone .dz-preview {
+    min-height: unset;
+}
+
+.manual-payment-uploader {
+    min-height: 100px!important;
+}
+
+.profile-cover-bg .h-pill, .avatar-holder .h-pill
+{
+    width: 30px;
+    height: 30px;
+}
+
+@media (max-width: 767px) {
+    .settings-content {
+        border:none!important;
+    }
+}
+
+.dz-filename{
+    display: none;
+}
+
+.fa-details-label{
+    margin-left: -36px;
+}
+
+
+.table-wrapper .rounded-circle.user-avatar{
+    width: 36px;
+    height: 36px;
+}
+
+.CodeMirror, .CodeMirror-scroll {
+    min-height: 100px;
+}
+
+
+/* Social links remove button (subtle) */
+.social-remove-btn{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(0,0,0,.12);
+    background: rgba(0,0,0,.02);
+    color: rgba(0,0,0,.55);
+
+    padding: 0;
+    cursor: pointer;
+    transition: background-color .08s ease, border-color .08s ease, color .08s ease, transform .08s ease;
+}
+
+.social-remove-btn ion-icon{
+    font-size: 15px;
+}
+
+.social-remove-btn:hover{
+    background: rgba(220, 53, 69, .08);
+    border-color: rgba(220, 53, 69, .35);
+    color: #dc3545;
+    transform: translateY(-1px);
+}
+
+.social-remove-btn:disabled{
+    opacity: .35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* Avatar & Cover uploading state */
+/* =========================
+   Shared loader base
+   ========================= */
+.profile-asset-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    background: rgba(0,0,0,0.35); /* default (cover) */
+}
+
+/* =========================
+   Loading state behavior
+   ========================= */
+.profile-cover-bg.loading .card-img-top,
+.avatar-holder.loading .card-img-top {
+    filter: blur(6px) brightness(0.95);
+    transition: filter 0.25s ease;
+}
+
+/* Disable interactions while loading */
+.profile-cover-bg.loading,
+.avatar-holder.loading {
+    pointer-events: none;
+}
+
+/* =========================
+   Shimmer animation
+   ========================= */
+.profile-asset-loading .shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        rgba(255,255,255,0.15) 25%,
+        rgba(255,255,255,0.45) 37%,
+        rgba(255,255,255,0.15) 63%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+    to { background-position: -200% 0; }
+}
+
+/* =========================
+   Cover container
+   ========================= */
+.profile-cover-bg {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* =========================
+   Avatar container
+   ========================= */
+.avatar-holder {
+    position: relative;
+    z-index: 5;           /* above cover */
+    overflow: visible;   /* keep ring working */
+}
+
+/* Avatar image */
+.avatar-holder .card-img-top {
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: #fff;
+}
+
+/* Remove Bootstrap card artifacts */
+.avatar-holder.card {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+/* Avatar-specific loader tweaks */
+.avatar-holder .profile-asset-loading {
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(0,0,0,0.18); /* lighter than cover */
+}

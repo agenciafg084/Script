@@ -1,0 +1,22 @@
+.home-header{
+    /*height:460px;*/
+    background-position: top right;
+    background-repeat: no-repeat;
+}
+
+.home-box-img{
+    max-width: 120px;
+    max-height: 120px;
+}
+
+.home-mid-img{
+    max-width: 400px;
+}
+
+.coinbasae-logo{
+    height:1.3rem
+}
+
+.suggestion-header-bg {
+    height: 140px !important;
+}
