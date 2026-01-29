@@ -116,6 +116,12 @@ var DepositSettings = {
             case 'payment-razorpay':
                 DepositSettings.provider = 'razorpay';
                 break;
+            case 'payment-asaas_pix':
+                DepositSettings.provider = 'asaas_pix';
+                break;
+            case 'payment-asaas_boleto':
+                DepositSettings.provider = 'asaas_boleto';
+                break;
             }
             return DepositSettings.provider;
         }

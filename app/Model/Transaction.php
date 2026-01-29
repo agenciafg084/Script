@@ -42,6 +42,7 @@ class Transaction extends Model
     public const MERCADO_PROVIDER = 'mercado';
     public const VEROTEL_PROVIDER = 'verotel';
     public const RAZORPAY_PROVIDER = 'razorpay';
+    public const ASAAS_PROVIDER = 'asaas';
     public const COINBASE_API_BASE_PATH = 'https://api.commerce.coinbase.com';
     public const NOWPAYMENTS_API_BASE_PATH = 'https://api.nowpayments.io/v1/';
     public const ALLOWED_PAYMENT_PROVIDERS = [
@@ -55,6 +56,7 @@ class Transaction extends Model
         self::MERCADO_PROVIDER,
         self::VEROTEL_PROVIDER,
         self::RAZORPAY_PROVIDER,
+        self::ASAAS_PROVIDER,
     ];
     public const PENDING_PAYMENT_PROCESSORS = [
         self::COINBASE_PROVIDER,
@@ -72,11 +74,39 @@ class Transaction extends Model
      * @var array
      */
     protected $fillable = [
-        'sender_user_id', 'recipient_user_id', 'subscription_id', 'stripe_transaction_id', 'paypal_payer_id', 'post_id',
-        'paypal_transaction_id', 'status', 'type', 'amount', 'payment_provider', 'paypal_transaction_token', 'currency', 'taxes',
-        'coinbase_charge_id', 'coinbase_transaction_token', 'ccbill_payment_token', 'ccbill_transaction_id', 'nowpayments_payment_id',
-        'nowpayments_order_id', 'stream_id', 'ccbill_subscription_id', 'user_message_id', 'paystack_transaction_token',
-        'verotel_payment_token', 'verotel_sale_id',
+        'sender_user_id',
+        'recipient_user_id',
+        'subscription_id',
+        'stripe_transaction_id',
+        'paypal_payer_id',
+        'post_id',
+        'paypal_transaction_id',
+        'status',
+        'type',
+        'amount',
+        'payment_provider',
+        'paypal_transaction_token',
+        'currency',
+        'taxes',
+        'coinbase_charge_id',
+        'coinbase_transaction_token',
+        'ccbill_payment_token',
+        'ccbill_transaction_id',
+        'nowpayments_payment_id',
+        'nowpayments_order_id',
+        'stream_id',
+        'ccbill_subscription_id',
+        'user_message_id',
+        'paystack_transaction_token',
+        'verotel_payment_token',
+        'verotel_sale_id',
+        'asaas_customer_id',
+        'asaas_payment_id',
+        'asaas_status',
+        'asaas_invoice_url',
+        'asaas_pix_qr_code',
+        'asaas_pix_payload',
+        'asaas_raw',
     ];
 
     /**
@@ -88,13 +118,8 @@ class Transaction extends Model
 
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
-
+        'asaas_raw' => 'json',
     ];
 
     public function getDecodedTaxesAttribute()

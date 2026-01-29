@@ -95,7 +95,7 @@ $(function () {
             let verotelProvider = !app.verotelRecurringDisabled;
 
             // handles ccbill provider as they only allow 30 or 90 days subscriptions
-            if(showCCBillProvider){
+            if (showCCBillProvider) {
                 if (type === 'three-months-subscription') {
                     numberOfMonths = 3;
                 } else if (type === 'six-months-subscription') {
@@ -116,7 +116,7 @@ $(function () {
 
             $('.payment-body .checkout-amount-input').addClass('d-none');
             paymentTitle = trans(type);
-            let subscriptionInterval = trans_choice('months', numberOfMonths, {'number': numberOfMonths});
+            let subscriptionInterval = trans_choice('months', numberOfMonths, { 'number': numberOfMonths });
             let key = app.currencyPosition === 'left' ? 'Subscribe to' : 'Subscribe to rightAligned';
             paymentDescription = trans(key, {
                 'amount': amount,
@@ -177,7 +177,7 @@ $(function () {
  * Checkout class
  */
 var checkout = {
-    allowedPaymentProcessors: ['stripe', 'paypal', 'credit', 'coinbase', 'nowpayments', 'ccbill', 'paystack', 'oxxo', 'mercado', 'verotel', 'razorpay'],
+    allowedPaymentProcessors: ['stripe', 'paypal', 'credit', 'coinbase', 'nowpayments', 'ccbill', 'paystack', 'oxxo', 'mercado', 'verotel', 'razorpay', 'asaas_pix', 'asaas_boleto'],
     paymentData: {},
     oneTimePaymentProcessorClasses: [
         '.nowpayments-payment-method',
@@ -191,6 +191,8 @@ var checkout = {
         '.credit-payment-method',
         '.verotel-payment-method',
         '.razorpay-payment-method',
+        '.asaas-pix-payment-method',
+        '.asaas-boleto-payment-method',
     ],
 
     /**
@@ -257,7 +259,7 @@ var checkout = {
             if (checkout.allowedPaymentProcessors.includes(processor)) {
                 checkout.updatePaymentForm();
                 $('.checkout-continue-btn .spinner-border').removeClass('d-none');
-                checkout.validateAllFields(()=>{$('.payment-button').trigger('click');});
+                checkout.validateAllFields(() => { $('.payment-button').trigger('click'); });
             }
         }
 
@@ -267,7 +269,7 @@ var checkout = {
      * Runs backend validation check for billing data
      * @param callback
      */
-    validateAllFields: function(callback){
+    validateAllFields: function (callback) {
         checkout.clearFormErrors();
         $.ajax({
             type: 'POST',
@@ -278,11 +280,11 @@ var checkout = {
             },
             error: function (result) {
                 $('.checkout-continue-btn .spinner-border').addClass('d-none');
-                if(result.status === 500){
-                    launchToast('danger',trans('Error'),result.responseJSON.message);
+                if (result.status === 500) {
+                    launchToast('danger', trans('Error'), result.responseJSON.message);
                 }
-                $.each(result.responseJSON.errors,function (field,error) {
-                    let fieldElement = $('.uifield-'+field);
+                $.each(result.responseJSON.errors, function (field, error) {
+                    let fieldElement = $('.uifield-' + field);
                     fieldElement.addClass('is-invalid');
                     fieldElement.parent().append(
                         `
@@ -321,6 +323,8 @@ var checkout = {
         const mercadoProvider = $('.mercado-payment-provider').hasClass('selected');
         const verotelProvider = $('.verotel-payment-provider').hasClass('selected');
         const razorpayProvider = $('.razorpay-payment-provider').hasClass('selected');
+        const asaasPixProvider = $('.asaas-pix-payment-provider').hasClass('selected');
+        const asaasBoletoProvider = $('.asaas-boleto-payment-provider').hasClass('selected');
         let val = null;
         if (paypalProvider) {
             val = 'paypal';
@@ -328,22 +332,26 @@ var checkout = {
             val = 'stripe';
         } else if (creditProvider) {
             val = 'credit';
-        } else if(coinbaseProvider){
+        } else if (coinbaseProvider) {
             val = 'coinbase';
-        } else if(nowPaymentsProvider){
+        } else if (nowPaymentsProvider) {
             val = 'nowpayments';
-        } else if(ccbillProvider){
+        } else if (ccbillProvider) {
             val = 'ccbill';
-        } else if(paystackProvider){
+        } else if (paystackProvider) {
             val = 'paystack';
-        } else if(oxxoProvider){
+        } else if (oxxoProvider) {
             val = 'oxxo';
-        } else if(mercadoProvider){
+        } else if (mercadoProvider) {
             val = 'mercado';
-        } else if(verotelProvider){
+        } else if (verotelProvider) {
             val = 'verotel';
-        } else if(razorpayProvider){
+        } else if (razorpayProvider) {
             val = 'razorpay';
+        } else if (asaasPixProvider) {
+            val = 'asaas_pix';
+        } else if (asaasBoletoProvider) {
+            val = 'asaas_boleto';
         }
         if (val) {
             checkout.paymentData.provider = val;
@@ -359,7 +367,7 @@ var checkout = {
     checkoutAmountValidation: function () {
         const checkoutAmount = $('#checkout-amount').val();
         // Apply a tips min-max validation | Rest don't need any constrains
-        if(checkout.paymentData.type === 'tip'){
+        if (checkout.paymentData.type === 'tip') {
             if ((checkoutAmount.length > 0 && checkoutAmount >= app.tipMinAmount && checkoutAmount <= app.tipMaxAmount)) {
                 $('#checkout-amount').removeClass('is-invalid');
                 $('#paypal-deposit-amount').val(checkoutAmount);
@@ -434,7 +442,7 @@ var checkout = {
             countryField.removeClass('is-invalid');
             checkout.paymentData.country = selectedCountry.text();
         }
-        else{
+        else {
             checkout.paymentData.country = '';
         }
     },
@@ -472,14 +480,14 @@ var checkout = {
             url: app.baseUrl + '/countries',
             success: function (result) {
                 if (result !== null && typeof result.countries !== 'undefined' && result.countries.length > 0) {
-                    $('.country-select').find('option').remove().end().append('<option value="">'+trans("Select a country")+'</option>');
+                    $('.country-select').find('option').remove().end().append('<option value="">' + trans("Select a country") + '</option>');
                     $.each(result.countries, function (i, item) {
                         let selected = checkout.paymentData.country !== null && checkout.paymentData.country === item.name;
                         $('.country-select').append($('<option>', {
                             value: item.id,
                             text: item.name,
                             selected: selected
-                        }).data({taxes: item.taxes}));
+                        }).data({ taxes: item.taxes }));
                         if (selected) {
                             checkout.updatePaymentSummaryData();
                         }
@@ -548,7 +556,7 @@ var checkout = {
             }
         }
 
-        let formattedTaxes = {data: [], taxesTotalAmount: 0.00, subtotal: subtotalAmount.toFixed(2)};
+        let formattedTaxes = { data: [], taxesTotalAmount: 0.00, subtotal: subtotalAmount.toFixed(2) };
 
         if (subtotalAmount > 0) {
             for (let j = 0; j < taxes.length; j++) {
@@ -584,7 +592,7 @@ var checkout = {
                     taxType: taxes[j].type
                 });
 
-                if(!taxes[j].hidden) {
+                if (!taxes[j].hidden) {
                     let item = "<div class=\"row ml-2\">\n" +
                         "<span class=\"col-sm left\">" + getTaxDescription(taxes[j].countryTaxName, taxes[j].countryTaxPercentage, taxes[j].type) + "</span>\n" +
                         "<span class=\"country-tax col-sm right text-right\">\n" +
@@ -634,43 +642,43 @@ var checkout = {
         $('.total-amount b').html(getWebsiteFormattedAmount(totalAmount.toFixed(2)));
     },
 
-    toggleCryptoPaymentProviders: function(toggle){
+    toggleCryptoPaymentProviders: function (toggle) {
         let coinbasePaymentMethod = $('.coinbase-payment-method');
         let nowPaymentsPaymentMethod = $('.nowpayments-payment-method');
-        if(toggle){
-            if(coinbasePaymentMethod.hasClass('d-none')){
+        if (toggle) {
+            if (coinbasePaymentMethod.hasClass('d-none')) {
                 coinbasePaymentMethod.removeClass('d-none');
             }
-            if(nowPaymentsPaymentMethod.hasClass('d-none')){
+            if (nowPaymentsPaymentMethod.hasClass('d-none')) {
                 nowPaymentsPaymentMethod.removeClass('d-none');
             }
         } else {
-            if(!coinbasePaymentMethod.hasClass('d-none')){
+            if (!coinbasePaymentMethod.hasClass('d-none')) {
                 coinbasePaymentMethod.addClass('d-none');
             }
-            if(!nowPaymentsPaymentMethod.hasClass('d-none')){
+            if (!nowPaymentsPaymentMethod.hasClass('d-none')) {
                 nowPaymentsPaymentMethod.addClass('d-none');
             }
         }
 
     },
 
-    togglePaymentProvider: function(toggle, paymentMethodClass){
+    togglePaymentProvider: function (toggle, paymentMethodClass) {
         let paymentMethod = $(paymentMethodClass);
-        if(toggle){
-            if(paymentMethod.hasClass('d-none')){
+        if (toggle) {
+            if (paymentMethod.hasClass('d-none')) {
                 paymentMethod.removeClass('d-none');
             }
         } else {
-            if(!paymentMethod.hasClass('d-none')){
+            if (!paymentMethod.hasClass('d-none')) {
                 paymentMethod.addClass('d-none');
             }
         }
 
     },
 
-    togglePaymentProviders: function(toggle, paymentMethodClasses){
-        paymentMethodClasses.forEach(function(paymentMethodClass){
+    togglePaymentProviders: function (toggle, paymentMethodClasses) {
+        paymentMethodClasses.forEach(function (paymentMethodClass) {
             checkout.togglePaymentProvider(toggle, paymentMethodClass);
         });
 

@@ -164,6 +164,15 @@ class PaymentsSettings extends Settings
 
     public ?string $razorpay_checkout_disabled = null;
 
+    // === Asaas ===
+    public ?string $asaas_api_key = null;
+
+    public ?string $asaas_webhook_token = null;
+
+    public ?string $asaas_checkout_disabled = null;
+
+    public ?string $asaas_env = 'sandbox';
+
     // === Withdrawals / Deposits ===
     public ?string $withdrawal_default_fee_percentage;
 
